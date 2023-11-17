@@ -3,6 +3,7 @@ message(STATUS "Configuring target ${PROJECT_NAME}::${TARGET_NAME}")
 
 add_library(${TARGET_NAME} src/foo.cpp)
 add_library(${PROJECT_NAME}::${TARGET_NAME} ALIAS ${TARGET_NAME})
+set_property(TARGET ${TARGET_NAME} PROPERTY OUTPUT_NAME ${PROJECT_NAME}_${TARGET_NAME})
 
 target_include_directories(
     ${TARGET_NAME} 
