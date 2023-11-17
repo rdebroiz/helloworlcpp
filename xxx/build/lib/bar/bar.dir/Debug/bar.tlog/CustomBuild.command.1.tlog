@@ -1,0 +1,10 @@
+^C:\USERS\REDEBROI\HELLOWORLDCPP\XXX\LIB\BAR\CMAKELISTS.TXT
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/redebroi/helloworldcpp/xxx -BC:/Users/redebroi/helloworldcpp/xxx/build --check-stamp-file C:/Users/redebroi/helloworldcpp/xxx/build/lib/bar/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

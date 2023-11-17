@@ -1,0 +1,10 @@
+C:/Users/redebroi/helloworldcpp/xxx/build/CMakeFiles/INSTALL.dir
+C:/Users/redebroi/helloworldcpp/xxx/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/redebroi/helloworldcpp/xxx/build/CMakeFiles/ZERO_CHECK.dir
+C:/Users/redebroi/helloworldcpp/xxx/build/lib/CMakeFiles/INSTALL.dir
+C:/Users/redebroi/helloworldcpp/xxx/build/lib/foo/CMakeFiles/foo.dir
+C:/Users/redebroi/helloworldcpp/xxx/build/lib/foo/CMakeFiles/INSTALL.dir
+C:/Users/redebroi/helloworldcpp/xxx/build/lib/bar/CMakeFiles/bar.dir
+C:/Users/redebroi/helloworldcpp/xxx/build/lib/bar/CMakeFiles/INSTALL.dir
+C:/Users/redebroi/helloworldcpp/xxx/build/app/CMakeFiles/xxx.dir
+C:/Users/redebroi/helloworldcpp/xxx/build/app/CMakeFiles/INSTALL.dir

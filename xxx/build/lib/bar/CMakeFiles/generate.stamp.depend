@@ -1,0 +1,4 @@
+# CMake generation dependency list for this directory.
+C:/Program Files/CMake/share/cmake-3.25/Modules/BasicConfigVersion-AnyNewerVersion.cmake.in
+C:/Users/redebroi/helloworldcpp/xxx/lib/bar/CMakeLists.txt
+C:/Users/redebroi/helloworldcpp/xxx/lib/bar/cmake/barConfig.cmake

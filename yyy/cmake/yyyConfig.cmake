@@ -1,0 +1,5 @@
+foreach(comp spam)
+    if(NOT TARGET ${comp})
+        include("./${comp}Targets.cmake")
+    endif()
+endforeach()

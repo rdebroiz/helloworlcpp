@@ -1,0 +1,15 @@
+C:/Users/redebroi/trash/xxx/lib/cmake/xxxConfig.cmake
+C:/Users/redebroi/trash/xxx/lib/cmake/xxxConfigVersion.cmake
+C:/Users/redebroi/trash/xxx/lib/foo.lib
+C:/Users/redebroi/trash/xxx/include/xxx/foo/foo.h
+C:/Users/redebroi/trash/xxx/lib/cmake/fooTargets.cmake
+C:/Users/redebroi/trash/xxx/lib/cmake/fooTargets-debug.cmake
+C:/Users/redebroi/trash/xxx/lib/cmake/fooConfig.cmake
+C:/Users/redebroi/trash/xxx/lib/cmake/fooConfigVersion.cmake
+C:/Users/redebroi/trash/xxx/lib/PREIXbar.lib
+C:/Users/redebroi/trash/xxx/include/xxx/bar/bar.h
+C:/Users/redebroi/trash/xxx/lib/cmake/barTargets.cmake
+C:/Users/redebroi/trash/xxx/lib/cmake/barTargets-debug.cmake
+C:/Users/redebroi/trash/xxx/lib/cmake/barConfig.cmake
+C:/Users/redebroi/trash/xxx/lib/cmake/barConfigVersion.cmake
+C:/Users/redebroi/trash/xxx/bin/xxx.exe
