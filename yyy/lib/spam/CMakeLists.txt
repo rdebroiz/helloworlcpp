@@ -5,10 +5,19 @@ add_library(${TARGET_NAME} src/spam.cpp)
 add_library(${PROJECT_NAME}::${TARGET_NAME} ALIAS ${TARGET_NAME})
 set_property(TARGET ${TARGET_NAME} PROPERTY OUTPUT_NAME ${PROJECT_NAME}_${TARGET_NAME})
 
+set(TARGET_EXPORT_FILENAME include/${PROJECT_NAME}/${TARGET_NAME}/export.h)
+generate_export_header(${TARGET_NAME} 
+  EXPORT_FILE_NAME 
+    ${TARGET_EXPORT_FILENAME} 
+  PREFIX_NAME 
+    ${PROJECT_NAME_UPPER}_
+)
+
 target_include_directories(
     ${TARGET_NAME} 
     PUBLIC 
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
         $<INSTALL_INTERFACE:include>
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
@@ -26,6 +35,13 @@ install(TARGETS ${TARGET_NAME} EXPORT ${TARGET_NAME}Targets
 install(
   DIRECTORY
     include/${PROJECT_NAME}
+  DESTINATION
+    include
+)
+
+install(
+  DIRECTORY
+    ${CMAKE_CURRENT_BINARY_DIR}/include/${PROJECT_NAME}
   DESTINATION
     include
 )

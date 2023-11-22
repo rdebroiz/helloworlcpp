@@ -1,14 +1,18 @@
 cmake_minimum_required(VERSION 3.3)
 project(xxx VERSION 1.0.0)
+string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPER)
 
 message(STATUS "Configuring project ${PROJECT_NAME} version ${PROJECT_VERSION}")
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+include(GenerateExportHeader)
+set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+set(CMAKE_VISIBILITY_INLINES_HIDDEN 1)
 
 include(CMakePackageConfigHelpers)
-set(CONFIG_PACKAGE_LOCATION lib/cmake/${TARGET_NAME})
+set(CONFIG_PACKAGE_LOCATION lib/cmake/${PROJECT_NAME})
 
 # lib
 add_subdirectory(lib)
