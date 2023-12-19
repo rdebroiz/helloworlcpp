@@ -14,7 +14,7 @@ set(CMAKE_VISIBILITY_INLINES_HIDDEN 1)
 include(CMakePackageConfigHelpers)
 set(CONFIG_PACKAGE_LOCATION lib/cmake/${PROJECT_NAME})
 
-find_package(xxx REQUIRED COMPONENTS foo bar)
+find_package(xxx REQUIRED COMPONENTS bar)
 
 # lib
 add_subdirectory(lib)
