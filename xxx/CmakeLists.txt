@@ -12,13 +12,14 @@ set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 set(CMAKE_VISIBILITY_INLINES_HIDDEN 1)
 
 include(CMakePackageConfigHelpers)
+include(cmake/module/NewTargetLibrary.cmake)
 set(CONFIG_PACKAGE_LOCATION lib/cmake/${PROJECT_NAME})
 
 # lib
 add_subdirectory(lib)
 
 # app
-add_subdirectory(app)
+#add_subdirectory(app)
 
 
 configure_file(

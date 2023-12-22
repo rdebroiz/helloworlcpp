@@ -1,0 +1,4 @@
+
+@_FIND_DEPENDENCY_CMD@
+
+include(${CMAKE_CURRENT_LIST_DIR}/@_target@Target.cmake)
