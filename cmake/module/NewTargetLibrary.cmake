@@ -1,98 +1,98 @@
 ﻿#[=[
-    Create a new target for a library.
+Create a new target for a library.
 
-    ---
+---
 
-    Synopsis:
+Synopsis:
 
-        new_target_library(<target> SOURCES <sources>...
-            [
-                NAMESPACE <namespace> 
-                VERSION <version> 
-                PUBLIC_LINK_LIBRARIES <public_link_libraries>...
-                PRIVATE_LINK_LIBRARIES <private_link_libraries>...
-                FIND_DEPENDENCY_ARGS <find_dependency_args>...
-                LIBRARY_OUTPUT_NAME_PREFIX <library_output_name_prefix>
-            ]
-        )
+    new_target_library(<target> SOURCES <sources>...
+        [
+            NAMESPACE <namespace> 
+            VERSION <version> 
+            PUBLIC_LINK_LIBRARIES <public_link_libraries>...
+            PRIVATE_LINK_LIBRARIES <private_link_libraries>...
+            FIND_DEPENDENCY_ARGS <find_dependency_args>...
+            LIBRARY_OUTPUT_NAME_PREFIX <library_output_name_prefix>
+        ]
+    )
+
+---
     
-    ---
-        
-      The target underlying source and include tree is expected to respect a predifined structure.
-    All sources are expected to be found in an `src` folder along the CMakeLists.txt file containing the call to this function.
-    All public headers are expected to be found in a `include/namespace/target` folder along the CMakeLists.txt file 
-    containing the call to this function. Private headers are expected to be found along the sources.
+    The target underlying source and include tree is expected to respect a predifined structure.
+All sources are expected to be found in an `src` folder along the CMakeLists.txt file containing the call to this function.
+All public headers are expected to be found in a `include/namespace/target` folder along the CMakeLists.txt file 
+containing the call to this function. Private headers are expected to be found along the sources.
+
+Public headers are then included using their path relative to the `include` folder .
+Private headers are included using their path relative to the `srcs` folder.
+
+Example, using the following tree:
+
+    ├───CMakeLists.txt
+    │
+    ├───include
+    │   └───namsepace
+    │       └───target
+    │           └───my_public_header.h
+    │
+    └───src
+        ├──target.cpp
+        └───private
+            └───my_private_header.h
+
+    the file `my_public_header.h` would be inclded using: 
+        `#include <namespace/target/my_public_header.h>`
+    and the file `my_private_header.h` would be included using:  
+        `#include <private/my_private_header.h>`
+
+    A public export file is generated in the build tree and is expected to be included with: `#include <namespace/target/export.h>`
+It exposes the macro: `<NAMESPACE>_<TARGET>_EXPORT` where <NAMSEPACE> is the uppercase of the <namspace> parameter and <target> the 
+uppercase of the <target> parameter.
+
+    The created target will be then refered in the cmake environment as `namespace::target` while the lib object is created as `namspace_target.[lib/dll/so/a...]`.
+for example to link later to the newly created Bar target delacared in the Foo namespace, one would do:
     
-    Public headers are then included using their path relative to the `include` folder .
-    Private headers are included using their path relative to the `srcs` folder.
+    `target_link_libraries(my_target PUBLIC Foo::Bar)`
 
-    Example, using the following tree:
+while the created object would be named `Foo_Bar.[lib/dll/so/a...]`
+The prefix added in front of the target name for the library name can be controlled with the <library_output_name_prefix> parameter.
+For example with <library_output_name_prefix> set to `F`, the output library name would be `FBar.[lib/dll/so/a...]`
 
-        ├───CMakeLists.txt
-        │
-        ├───include
-        │   └───namsepace
-        │       └───target
-        │           └───my_public_header.h
-        │
-        └───src
-            ├──target.cpp
-            └───private
-                └───my_private_header.h
+How dpendencies required by the target are specfied with FIND_DEPENDENCY_ARGS. It is a list of parameter to pass to the command
+`find_dependency` (analog to `find_package`).
 
-        the file `my_public_header.h` would be inclded using: 
-            `#include <namespace/target/my_public_header.h>`
-        and the file `my_private_header.h` would be included using:  
-            `#include <private/my_private_header.h>`
+Example the commans tio create new a lib target called MyLib requiring a dependence to the libs: 
+Qt6::Widgets, Qt6::Graphics and boost::graph could look like:
 
-      A public export file is generated in the build tree and is expected to be included with: `#include <namespace/target/export.h>`
-    It exposes the macro: `<NAMESPACE>_<TARGET>_EXPORT` where <NAMSEPACE> is the uppercase of the <namspace> parameter and <target> the 
-    uppercase of the <target> parameter.
+    ```
+    new_target_library(MyLib 
+        SOURCES 
+            src/mylib.cpp
+        PUBLIC_LINK_LIBRARIES
+            Qt6::Widgets
+            Qt6::Graphics
+            boost::graph
+        FIND_DEPENDENCY_ARGS
+            "Qt6 REQUIRED COMPONENTS Widgets Graphics"
+            "Boost REQUIRED COMPONENTS graph"
+    )
+    ```
 
-      The created target will be then refered in the cmake environment as `namespace::target` while the lib object is created as `namspace_target.[lib/dll/so/a...]`.
-    for example to link later to the newly created Bar target delacared in the Foo namespace, one would do:
-        
-        `target_link_libraries(my_target PUBLIC Foo::Bar)`
-    
-    while the created object would be named `Foo_Bar.[lib/dll/so/a...]`
-    The prefix added in front of the target name for the library name can be controlled with the <library_output_name_prefix> parameter.
-    For example with <library_output_name_prefix> set to `F`, the output library name would be `FBar.[lib/dll/so/a...]`
+    /!\ Note the double quote surrouding each set of parameters of the find_dependency command passed to FIND_DEPENDENCY_ARGS.
 
-    How dpendencies required by the target are specfied with FIND_DEPENDENCY_ARGS. It is a list of parameter to pass to the command
-    `find_dependency` (analog to `find_package`).
+---
 
-    Example the commans tio create new a lib target called MyLib requiring a dependence to the libs: 
-    Qt6::Widgets, Qt6::Graphics and boost::graph could look like:
+Parameters:
+    <target>:                       - Name of the target to create.
+    <sources>:                      - List of file to compile
 
-        ```
-        new_target_library(MyLib 
-	        SOURCES 
-		        src/mylib.cpp
-	        PUBLIC_LINK_LIBRARIES
-		        Qt6::Widgets
-                Qt6::Graphics
-                boost::graph
-	        FIND_DEPENDENCY_ARGS
-		        "Qt6 REQUIRED COMPONENTS Widgets Graphics"
-                "Boost REQUIRED COMPONENTS graph"
-        )
-        ```
-    
-        /!\ Note the double quote surrouding each set of parameters of the find_dependency command passed to FIND_DEPENDENCY_ARGS.
-
-    ---
-
-    Parameters:
-        <target>:                       - Name of the target to create.
-        <sources>:                      - List of file to compile
-
-    Optional Parameters
-        <namespace>:                    - Name of the namespace the target lives in. (default ${PROJECT_NAME})
-        <version>:                      - Version of the craeted target. Used in <target>ConfigVersion.cmake file. (default ${PROJECT_VERSION})
-        <public_link_libraries>         - List of library to publicly link with
-        <private_link_libraries>        - List of library to privately link with
-        <find_dependency_args>          - A list of args to pass to the `find_dependency` comand in the <target>Config.cmake file
-        <library_output_name_prefix>    - The prefix to add in front of the library output name. (default <namespace>_)
+Optional Parameters
+    <namespace>:                    - Name of the namespace the target lives in. (default ${PROJECT_NAME})
+    <version>:                      - Version of the craeted target. Used in <target>ConfigVersion.cmake file. (default ${PROJECT_VERSION})
+    <public_link_libraries>         - List of library to publicly link with
+    <private_link_libraries>        - List of library to privately link with
+    <find_dependency_args>          - A list of args to pass to the `find_dependency` comand in the <target>Config.cmake file
+    <library_output_name_prefix>    - The prefix to add in front of the library output name. (default <namespace>_)
 
 #]=]
 
