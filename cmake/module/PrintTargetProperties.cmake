@@ -16,7 +16,6 @@ function(print_target_properties _target)
     endif()
 
     foreach(_prop ${_PROPERTY_LIST})
-        string(REPLACE "<CONFIG>" "${CMAKE_BUILD_TYPE}" _prop ${_prop})
         get_target_property(_propval ${_target} ${_prop})
         if (_propval)
             message (STATUS "${_prop}: ${_propval}")
