@@ -5,4 +5,6 @@ new_target_library(bar
         xxx::foo
     SOURCES 
         src/bar.cpp
+    PRIVATE_DEFINITIONS
+        XXX="xxx"
 )
