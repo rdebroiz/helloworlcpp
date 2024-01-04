@@ -13,6 +13,8 @@ Synopsis:
             PRIVATE_DEPENDENCIES <private_dependencies>...
             PUBLIC_LINK_LIBRARIES <public_link_libraries>...
             PRIVATE_LINK_LIBRARIES <private_link_libraries>...
+            PUBLIC_DEFINITIONS <public_definitions>...
+            PRIVATE_DEFINITIONS <private_definitions>...
             LIBRARY_OUTPUT_NAME_PREFIX <library_output_name_prefix>
         ]
     )
@@ -81,7 +83,7 @@ the command to create a new lib target called MyLib requiring a public dependenc
     )
     ```
 
-    /!\ Note the double quote surrouding each set of parameters of the find_dependency command passed to PUBLIC_DEPENDENCIES.
+    /!\ Note the double quotes surrouding each set of parameters of the find_dependency command passed to PUBLIC_DEPENDENCIES.
 
 ---
 
@@ -92,10 +94,12 @@ Parameters:
 Optional Parameters
     <namespace>:                    - Name of the namespace the target lives in. (default ${PROJECT_NAME})
     <version>:                      - Version of the craeted target. Used in <target>ConfigVersion.cmake file. (default ${PROJECT_VERSION})
-    <public_link_libraries>         - List of library to publicly link with
-    <private_link_libraries>        - List of library to privately link with
+    <public_link_libraries>         - A list of library to publicly link with
+    <private_link_libraries>        - A list of library to privately link with
     <public_dependencies>           - A list of args to pass to the `find_package` and `find_dependency` command in the <target>Config.cmake file
-    <private_dependencies>           - A list of args to pass to the `find_package` command
+    <private_dependencies>          - A list of args to pass to the `find_package` command
+    <public_definitions>            - A list of macro to pass to the compiler when compiling the lib and libs that depend on it.
+    <private_definitions>           - A list of macro to pass to the compiler only when compiling the lib. 
     <library_output_name_prefix>    - The prefix to add in front of the library output name. (default <namespace>_)
 
 #]=]
@@ -118,6 +122,8 @@ function(new_target_library _target)
         PRIVATE_LINK_LIBRARIES 
         PUBLIC_DEPENDENCIES
         PRIVATE_DEPENDENCIES
+        PUBLIC_DEFINITIONS
+        PRIVATE_DEFINITIONS
     )
 
     cmake_parse_arguments("" "${_options}" "${_one_value_args}" "${_multi_value_args}" ${ARGN})
@@ -130,7 +136,7 @@ function(new_target_library _target)
         message(FATAL_ERROR "Call to 'new_target_library' without any target name")
     endif()
 
-    # Check _SOURCES argument
+    # Check SOURCES argument
     if(NOT DEFINED _SOURCES OR DEFINED _SOURCES_KEYWORDS_MISSING_VALUES)
         message(FATAL_ERROR "Call to 'new_target_library' for ${_target} without any SOURCES")
     endif()
@@ -171,6 +177,16 @@ function(new_target_library _target)
     # Check PRIVATE_DEPENDENCIES argument
     if(DEFINED _PRIVATE_DEPENDENCIES_KEYWORDS_MISSING_VALUES)
         message(FATAL_ERROR "Call to 'new_target_library' for ${_target} has no value for specified PRIVATE_DEPENDENCIES parameter")
+    endif()
+
+    # Check PUBLIC_DEFINITONS argument
+    if(DEFINED _PUBLIC_DEFINITONS_KEYWORDS_MISSING_VALUES)
+        message(FATAL_ERROR "Call to 'new_target_library' for ${_target} has no value for specified PUBLIC_DEFINITONS parameter")
+    endif()
+
+    # Check PRIVATE_DEFINTIONS argument
+    if(DEFINED _PRIVATE_DEFINTIONS_KEYWORDS_MISSING_VALUES)
+        message(FATAL_ERROR "Call to 'new_target_library' for ${_target} has no value for specified PRIVATE_DEFINTIONS parameter")
     endif()
 
     # Check LIBRARY_OUTPUT_NAME_PREFIX argument
@@ -226,6 +242,14 @@ function(new_target_library _target)
         target_link_libraries(${_target} PRIVATE ${_PRIVATE_LINK_LIBRARIES})
     endif()
     
+
+    # Set macro flags
+    if(DEFINED _PUBLIC_DEFINIRONS)
+        target_compile_definitions(${_target} PUBLIC ${_PUBLIC_DEFINIRONS})
+    endif()
+    if(DEFINED _PRIVATE_DEFINITIONS)
+        target_compile_definitions(${_target} PRIVATE ${_PRIVATE_DEFINITIONS})
+    endif()
 
     # Generate export header
     set(_TARGET_EXPORT_FILENAME include/${_NAMESPACE}/${_target}/export.h)
