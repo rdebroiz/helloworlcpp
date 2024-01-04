@@ -1,6 +1,6 @@
-#include <yyy/spam/spam.h>
+#include <yyy/foo/foo.h>
 
 int main() {
-    yyy::spam::Spam spam;
-    spam.trigger();
+    yyy::foo::Foo yyyFoo;
+    yyyFoo.trigger();
 }

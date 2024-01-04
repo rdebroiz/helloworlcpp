@@ -3,5 +3,5 @@
 #include <iostream>
 
 void xxx::foo::Foo::trigger() {
-    std::cout << "trigerring foo." << std::endl;
+    std::cout << "trigerring xxx::foo." << std::endl;
 }

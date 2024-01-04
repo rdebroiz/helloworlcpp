@@ -1,5 +1,5 @@
 message(STATUS "Configuring libraries")
 
-option(BUILD_SHARED_LIBS "Build sharded libraries." OFF)
+option(BUILD_SHARED_LIBS "Build sharded libraries." ON)
 
-add_subdirectory(spam)
+add_subdirectory(foo)

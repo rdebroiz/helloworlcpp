@@ -1,7 +1,7 @@
 set(TARGET_NAME ${PROJECT_NAME})
 
 add_executable(${TARGET_NAME} src/main.cpp)
-target_link_libraries(${TARGET_NAME} yyy::spam)
+target_link_libraries(${TARGET_NAME} yyy::foo)
 
 install(TARGETS ${TARGET_NAME} EXPORT ${TARGET_NAME}Targets
   LIBRARY DESTINATION lib

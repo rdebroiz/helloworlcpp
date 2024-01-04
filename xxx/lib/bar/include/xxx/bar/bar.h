@@ -17,5 +17,5 @@ class XXX_BAR_EXPORT Bar {
         foo::Foo foo;
 };
 
-}
-}
+} // eon bar
+} // eon xxx

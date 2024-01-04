@@ -9,16 +9,17 @@ Synopsis:
         [
             NAMESPACE <namespace> 
             VERSION <version> 
+            PUBLIC_DEPENDENCIES <public_dependencies>...
+            PRIVATE_DEPENDENCIES <private_dependencies>...
             PUBLIC_LINK_LIBRARIES <public_link_libraries>...
             PRIVATE_LINK_LIBRARIES <private_link_libraries>...
-            FIND_DEPENDENCY_ARGS <find_dependency_args>...
             LIBRARY_OUTPUT_NAME_PREFIX <library_output_name_prefix>
         ]
     )
 
 ---
     
-    The target underlying source and include tree is expected to respect a predifined structure.
+    The target's underlying sources and include directories tree is expected to respect a predifined structure.
 All sources are expected to be found in an `src` folder along the CMakeLists.txt file containing the call to this function.
 All public headers are expected to be found in a `include/namespace/target` folder along the CMakeLists.txt file 
 containing the call to this function. Private headers are expected to be found along the sources.
@@ -58,11 +59,13 @@ while the created object would be named `Foo_Bar.[lib/dll/so/a...]`
 The prefix added in front of the target name for the library name can be controlled with the <library_output_name_prefix> parameter.
 For example with <library_output_name_prefix> set to `F`, the output library name would be `FBar.[lib/dll/so/a...]`
 
-How dpendencies required by the target are specfied with FIND_DEPENDENCY_ARGS. It is a list of parameter to pass to the command
-`find_dependency` (analog to `find_package`).
+How dpendencies required by the target are specfied with PUBLIC_DEPENDENCIES and PRIVATE_DEPENDENCIES. It is a list of parameter to pass to the 
+`find_package` and `find_dependency` commands. PUBLIC_DEPENDENCIES are added to the `find_package` (call during the invocation of this function)
+and `find_dependency` (call during the invocation of the generated ${_target}Config.cmake module). PRIVATE_DEPENDENCIES are only added to the `find_package` command.
 
-Example the commans tio create new a lib target called MyLib requiring a dependence to the libs: 
-Qt6::Widgets, Qt6::Graphics and boost::graph could look like:
+Example: 
+
+the command to create a new lib target called MyLib requiring a public dependence to the libs: Qt6::Widgets, Qt6::Graphics and boost::graph could look like:
 
     ```
     new_target_library(MyLib 
@@ -72,13 +75,13 @@ Qt6::Widgets, Qt6::Graphics and boost::graph could look like:
             Qt6::Widgets
             Qt6::Graphics
             boost::graph
-        FIND_DEPENDENCY_ARGS
+        PUBLIC_DEPENDENCIES
             "Qt6 REQUIRED COMPONENTS Widgets Graphics"
             "Boost REQUIRED COMPONENTS graph"
     )
     ```
 
-    /!\ Note the double quote surrouding each set of parameters of the find_dependency command passed to FIND_DEPENDENCY_ARGS.
+    /!\ Note the double quote surrouding each set of parameters of the find_dependency command passed to PUBLIC_DEPENDENCIES.
 
 ---
 
@@ -91,7 +94,8 @@ Optional Parameters
     <version>:                      - Version of the craeted target. Used in <target>ConfigVersion.cmake file. (default ${PROJECT_VERSION})
     <public_link_libraries>         - List of library to publicly link with
     <private_link_libraries>        - List of library to privately link with
-    <find_dependency_args>          - A list of args to pass to the `find_dependency` comand in the <target>Config.cmake file
+    <public_dependencies>           - A list of args to pass to the `find_package` and `find_dependency` command in the <target>Config.cmake file
+    <private_dependencies>           - A list of args to pass to the `find_package` command
     <library_output_name_prefix>    - The prefix to add in front of the library output name. (default <namespace>_)
 
 #]=]
@@ -112,7 +116,8 @@ function(new_target_library _target)
         SOURCES 
         PUBLIC_LINK_LIBRARIES 
         PRIVATE_LINK_LIBRARIES 
-        FIND_DEPENDENCY_ARGS
+        PUBLIC_DEPENDENCIES
+        PRIVATE_DEPENDENCIES
     )
 
     cmake_parse_arguments("" "${_options}" "${_one_value_args}" "${_multi_value_args}" ${ARGN})
@@ -158,9 +163,14 @@ function(new_target_library _target)
         message(FATAL_ERROR "Call to 'new_target_library' for ${_target} has no value for specified PRIVATE_LINK_LIBRARIES parameter")
     endif()
 
-    # Check FIND_DEPENDENCIES_CMD argument
-    if(DEFINED _FIND_DEPENDENCY_ARGS_KEYWORDS_MISSING_VALUES)
-        message(FATAL_ERROR "Call to 'new_target_library' for ${_target} has no value for specified FIND_DEPENDENCY_ARGS parameter")
+    # Check PUBLIC_DEPENDENCIES argument
+    if(DEFINED _PUBLIC_DEPENDENCIES_KEYWORDS_MISSING_VALUES)
+        message(FATAL_ERROR "Call to 'new_target_library' for ${_target} has no value for specified PUBLIC_DEPENDENCIES parameter")
+    endif()
+
+    # Check PRIVATE_DEPENDENCIES argument
+    if(DEFINED _PRIVATE_DEPENDENCIES_KEYWORDS_MISSING_VALUES)
+        message(FATAL_ERROR "Call to 'new_target_library' for ${_target} has no value for specified PRIVATE_DEPENDENCIES parameter")
     endif()
 
     # Check LIBRARY_OUTPUT_NAME_PREFIX argument
@@ -175,8 +185,30 @@ function(new_target_library _target)
     ############################################################################
     ############################################################################
 
+    # include required modules
+    include(GenerateExportHeader)
+    include(CMakePackageConfigHelpers)
+
+    ############################################################################
+    ############################################################################
+
     message(STATUS "Configuring target ${_NAMESPACE}::${_target}")
 
+    # find packages for public and private dependencies
+    if(DEFINED _PUBLIC_DEPENDENCIES)
+        message(STATUS "looking for public dependencies package")
+        foreach(_find_package_args ${_PUBLIC_DEPENDENCIES})
+            separate_arguments(_find_package_args)
+            find_package(${_find_package_args})
+        endforeach()
+    endif()
+    if(DEFINED _PRIVATE_DEPENDENCIES)
+        message(STATUS "looking for private dependencies package")
+        foreach(_find_package_args ${_PRIVATE_DEPENDENCIES})
+            separate_arguments(_find_package_args)
+            find_package(${_find_package_args})
+        endforeach()
+    endif()
 
     # Add library
     add_library(${_target} ${_SOURCES})
@@ -218,15 +250,15 @@ function(new_target_library _target)
     
     # Generate ${_TARGET}ConfigVersion.cmake in build tree
     write_basic_package_version_file(
-        ${CMAKE_CURRENT_BINARY_DIR}/${_target}/${_target}ConfigVersion.cmake
+        ${CMAKE_BINARY_DIR}/cmake/${_target}ConfigVersion.cmake
         VERSION ${_VERSION}
         COMPATIBILITY AnyNewerVersion
     )
 
     # Reconstruct the find_dependency string to evaluate in ${_target}Config.cmake
-    if (DEFINED _FIND_DEPENDENCY_ARGS)
+    if(DEFINED _PUBLIC_DEPENDENCIES)
         set(_FIND_DEPENDENCY_CMD "include(CMakeFindDependencyMacro)")
-        foreach(_args ${_FIND_DEPENDENCY_ARGS})
+        foreach(_args ${_PUBLIC_DEPENDENCIES})
             string(PREPEND _args "find_dependency(")
             string(APPEND _args ")")
             list(APPEND _FIND_DEPENDENCY_CMD ${_args})
@@ -236,7 +268,7 @@ function(new_target_library _target)
     # Generate ${_target}Config.cmake in build tree
     configure_file(
         ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/configure/TargetLibraryConfig.cmake.in
-        ${CMAKE_CURRENT_BINARY_DIR}/${_target}/${_target}Config.cmake
+        ${CMAKE_BINARY_DIR}/cmake/${_target}Config.cmake
         @ONLY
     )
 
@@ -280,8 +312,8 @@ function(new_target_library _target)
     # Install the Config files (${_target}Config.cmake and ${_target}ConfigVersion.cmake)
     install(
       FILES
-        cmake/${_target}Config.cmake
-        ${CMAKE_CURRENT_BINARY_DIR}/${_target}/${_target}ConfigVersion.cmake
+        ${CMAKE_BINARY_DIR}/cmake/${_target}Config.cmake
+        ${CMAKE_BINARY_DIR}/cmake/${_target}ConfigVersion.cmake
       DESTINATION
         lib/cmake/${_NAMESPACE}
     )
@@ -291,7 +323,7 @@ function(new_target_library _target)
     # later in the current CMake project the same way the installed one would be used.
     export(
         EXPORT ${_target}Target
-        FILE ${CMAKE_CURRENT_BINARY_DIR}/${_target}/${_target}Target.cmake 
+        FILE ${CMAKE_BINARY_DIR}/cmake/${_target}Target.cmake 
         NAMESPACE ${_NAMESPACE}::
     )
 

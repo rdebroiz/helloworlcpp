@@ -1,13 +1,13 @@
-#include <yyy/spam/spam.h>
+#include <yyy/foo/foo.h>
 
 #include <iostream>
 
-void yyy::spam::Spam::trigger() {
+void yyy::foo::Foo::trigger() {
     std::cout << "---" << std::endl;
-    std::cout << "trigerring spam." << std::endl;
+    std::cout << "trigerring yyy::foo." << std::endl;
     std::cout << "---" << std::endl;
-    this->bar.trigger();
+    this->xxxBar.trigger();
     std::cout << "---" << std::endl;
-    this->foo.trigger();
+    this->xxxFoo.trigger();
     std::cout << "---" << std::endl;
 }
