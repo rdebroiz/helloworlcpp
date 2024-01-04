@@ -208,7 +208,7 @@ function(new_target_library _target)
     ############################################################################
     ############################################################################
 
-
+    message(STATUS "")
     message(STATUS "############################################################################")
     message(STATUS "Configuring target ${_NAMESPACE}::${_target}")
 
@@ -232,30 +232,24 @@ function(new_target_library _target)
     add_library(${_target} ${_SOURCES})
     # Add a library alias
     add_library(${_NAMESPACE}::${_target} ALIAS ${_target})
-    message(STATUS "library alias: ${_NAMESPACE}::${_target}")
     # Set the library output name
     set_property(TARGET ${_target} PROPERTY OUTPUT_NAME "${_LIBRARY_OUTPUT_NAME_PREFIX}${_target}")
-    message(STATUS "library ouput name: ${_LIBRARY_OUTPUT_NAME_PREFIX}${_target}")
 
 
     # Set link flags
     if(DEFINED _PUBLIC_LINK_LIBRARIES)
-        message(STATUS "linking with public libraries: ${_PUBLIC_LINK_LIBRARIES}")
         target_link_libraries(${_target} PUBLIC ${_PUBLIC_LINK_LIBRARIES})
     endif()
     if(DEFINED _PRIVATE_LINK_LIBRARIES)
-        message(STATUS "linking with private libraries: ${_PRIVATE_LINK_LIBRARIES}")
         target_link_libraries(${_target} PRIVATE ${_PRIVATE_LINK_LIBRARIES})
     endif()
     
 
     # Set macro flags
     if(DEFINED _PUBLIC_DEFINITIONS)
-        message(STATUS "public definitions: ${_PUBLIC_DEFINITIONS}")
         target_compile_definitions(${_target} PUBLIC ${_PUBLIC_DEFINITIONS})
     endif()
     if(DEFINED _PRIVATE_DEFINITIONS)
-        message(STATUS "private definitions: ${_PRIVATE_DEFINITIONS}")
         target_compile_definitions(${_target} PRIVATE ${_PRIVATE_DEFINITIONS})
     endif()
 
@@ -268,7 +262,7 @@ function(new_target_library _target)
     PREFIX_NAME 
         ${_NAMESPACE_UPPER}_
     )
-    message(STATUS "Export header generated in: ${CMAKE_CUURENT_BINARY_DIR}/${_TARGET_EXPORT_FILENAME}")
+    message(STATUS "Export header generated in: ${CMAKE_CURRENT_BINARY_DIR}/${_TARGET_EXPORT_FILENAME}")
     string(TOUPPER ${_target} _target_upper)
     message(STATUS "Export macro:  ${_NAMESPACE_UPPER}_${_target_upper}")
 
@@ -361,6 +355,6 @@ function(new_target_library _target)
         FILE ${CMAKE_BINARY_DIR}/cmake/${_target}Target.cmake 
         NAMESPACE ${_NAMESPACE}::
     )
-    message(STATUS "############################################################################")
+    message(STATUS "")
 
 endfunction()

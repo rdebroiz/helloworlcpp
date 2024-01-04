@@ -8,3 +8,4 @@ new_target_library(bar
     PRIVATE_DEFINITIONS
         XXX="xxx"
 )
+print_target_properties(bar)
