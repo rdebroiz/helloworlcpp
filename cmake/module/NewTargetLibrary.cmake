@@ -257,10 +257,10 @@ function(new_target_library _target)
     set(_TARGET_EXPORT_FILENAME include/${_NAMESPACE}/${_target}/export.h)
 
     generate_export_header(${_target} 
-    EXPORT_FILE_NAME 
-        ${_TARGET_EXPORT_FILENAME} 
-    PREFIX_NAME 
-        ${_NAMESPACE_UPPER}_
+        EXPORT_FILE_NAME 
+            ${_TARGET_EXPORT_FILENAME} 
+        PREFIX_NAME 
+            ${_NAMESPACE_UPPER}_
     )
     message(STATUS "Export header generated in: ${CMAKE_CURRENT_BINARY_DIR}/${_TARGET_EXPORT_FILENAME}")
     string(TOUPPER ${_target} _target_upper)
