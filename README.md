@@ -5,14 +5,14 @@ This repo aims to give an example of good practices when creating modular cpp pr
 It contains an example of two minimal cpp projects *xxx* and *yyy*
 
 * `xxx` is composed of two libraries, *foo* and *bar* and one execuatable called *xxx*. `foo` is a "public" (in the `CMake` meaning) dependence of `bar` and `bar` is a public dependence of the execuatble `xxx`.
-* `yyy` is composed of one library *foo* and one executable called *yyy*. The `xxx::bar` library is apublic dependence of `yyy::foo` and `yyy::foo` is a public dependence of the execuatble `yyy`.
+* `yyy` is composed of one library *foo* and one executable called *yyy*. The `xxx::bar` library is a public dependence of `yyy::foo` and `yyy::foo` is a public dependence of the execuatble `yyy`.
 
 ---
 
 All the burden of creating a library target and correctly install it (in the "modern" `CMake` way) is done in the [`new_target_library`](https://github.com/rdebroiz/helloworlcpp/blob/main/cmake/module/NewTargetLibrary.cmake) function.
 The content of that function can be mimic for more complex situation, projects that depends on non modern cmake target and required explicit call to `target_include_directories` for instance (even if one could create an imported target for that).
 
-At the end all one need to create a new library is a call to that function with the right arguments. 
+At the end all one needs to do to create a new library is a call to that function with the right arguments. 
 Here is what it looks like for the `yyy::foo` library:
 
 ```cmake
