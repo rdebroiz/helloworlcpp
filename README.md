@@ -33,7 +33,7 @@ new_target_library(foo
 To correctly works it requires that the library sources and headers tree follow some other good practices.
 
 * Sources are expected to be found in an `src` folder at the root of the library.
-* Public headers are expected to be found in a `include/project_name/library_name` folder at the root of the library. 
+* Public headers are expected to be found in a `include/<project_name>/<library_name>` folder at the root of the library. 
 * Private headers are expected to be found along the sources (.cpp files).
 
 Public headers are then included using their path relative to the `include` folder .
