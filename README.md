@@ -58,7 +58,7 @@ Example for the `yyy::foo` library:
 # Symbols visibility
 
 All symbols are hidden by default on every plateform. The export macro are genereated in a `export.h` header by CMake.
-It must be icnluded with `#include <project_name/library_name/export.h>`
+It must be included with `#include <project_name/library_name/export.h>`
 
 The export macro is called <PROJECT_NAME>_<LIBRARY_NAME>_EXPORT
 
